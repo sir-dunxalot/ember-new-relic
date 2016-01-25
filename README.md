@@ -1,26 +1,119 @@
-# Ember-new-relic
+# Ember New Relic
 
-This README outlines the details of collaborating on this Ember addon.
+This is an early-stage addon for New Relic Browser. All PRs and issues are welcome.
+
+- [Installation](#installation)
+- [Usage](#usage)
+- [Content Security Policy](#content-security-policy)
 
 ## Installation
 
-* `git clone` this repository
-* `npm install`
-* `bower install`
+```sh
+ember install ember-new-relic
+```
 
-## Running
+## Usage
 
-* `ember server`
-* Visit your app at http://localhost:4200.
+Add your `applicationID` and `licenseKey` to `environment/config.js`:
 
-## Running Tests
+```js
+/* config/environment.js */
 
-* `npm test` (Runs `ember try:testall` to test your addon against multiple Ember versions)
-* `ember test`
-* `ember test --server`
+module.exports = function(environment) {
+  environment === 'development';
 
-## Building
+  var ENV = {
+    newRelic: {
+      applicationId: '97bfuo3FFd3',
+      licenseKey: 'ef234SgE4'
+    }
+  };
+}
+```
 
-* `ember build`
+You might also want to specify your agent:
 
-For more information on using ember-cli, visit [http://www.ember-cli.com/](http://www.ember-cli.com/).
+```js
+/* config/environment.js */
+
+module.exports = function(environment) {
+  environment === 'development';
+
+  var ENV = {
+    newRelic: {
+      agent: 'js-agent.newrelic.com/nr-768.min.js',
+      applicationId: '97bfuo3FFd3',
+      licenseKey: 'ef234SgE4'
+    }
+  };
+}
+```
+
+All of the above can be found in your New Relic Browser's application settings.
+
+To enable New Relic Browser in certain environments, just include `applicationId` for those environments only:
+
+```js
+/* config/environment.js */
+
+module.exports = function(environment) {
+  environment === 'development';
+
+  var ENV = {
+    newRelic: {
+      licenseKey: 'ef234SgE4'
+    }
+  };
+
+  if (environment !== test) {
+    ENV.newRelic.applicationId = '97bfuo3FFd3';
+  }
+}
+```
+
+You can also use different application IDs for different environments:
+
+```js
+/* config/environment.js */
+
+module.exports = function(environment) {
+  environment === 'development';
+
+  var ENV = {
+    newRelic: {
+      licenseKey: 'ef234SgE4'
+    }
+  };
+
+  if (environment === 'development') {
+    ENV.newRelic.applicationId = '97bfuo3FFd3';
+  } else if (environment === 'production') {
+    ENV.newRelic.applicationId = 'f99FJ930sp';
+  }
+}
+```
+
+## Content Security Policy
+
+To avoid browser errors, add the following to your CSP:
+
+```js
+/* config/environment.js */
+
+module.exports = function(environment) {
+  environment === 'development';
+
+  var ENV = {
+    contentSecurityPolicy: {
+      licenseKey: 'ef234SgE4',
+      applicationId: '97bfuo3FFd3',
+    },
+
+    contentSecurityPolicy: {
+      'connect-src': "'self' https://*.nr-data.net",
+      'img-src': "'self' https://*.nr-data.net",
+      'script-src': "'self' 'unsafe-inline' http://*.newrelic.com https://*.nr-data.net",
+    },
+  };
+}
+```

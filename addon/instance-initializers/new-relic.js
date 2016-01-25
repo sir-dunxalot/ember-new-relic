@@ -1,6 +1,6 @@
 import Ember from 'ember';
 
-export function initialize(applicationInstance) {
+export function initialize() {
   const { NREUM } = window;
 
   if (!NREUM) {
@@ -31,7 +31,7 @@ export function initialize(applicationInstance) {
 
   Ember.Logger.error = function(message, cause, stack) {
     handleError(generateError(cause, stack));
-  }
+  };
 }
 
 export default {

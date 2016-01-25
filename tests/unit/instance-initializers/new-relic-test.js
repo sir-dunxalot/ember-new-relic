@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import NewRelicInitializer from '../../../initializers/new-relic';
+import NewRelicInitializer from '../../../instance-initializers/new-relic';
 import { module, test } from 'qunit';
 
 let application;
