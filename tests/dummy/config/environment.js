@@ -26,7 +26,7 @@ module.exports = function(environment) {
     contentSecurityPolicy: {
       'connect-src': "'self' https://*.nr-data.net",
       'img-src': "'self' https://*.nr-data.net",
-      'script-src': "'self' 'unsafe-inline' http://*.newrelic.com https://*.nr-data.net",
+      'script-src': "'self' 'unsafe-inline' http://*.newrelic.com https://*.nr-data.net http://*.nr-data.net",
       'style-src': "'self' 'unsafe-inline'",
     },
   };
