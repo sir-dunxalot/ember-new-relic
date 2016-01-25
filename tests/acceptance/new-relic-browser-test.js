@@ -8,10 +8,9 @@ test('Loading New Relic Browser', function(assert) {
   visit('/');
 
   andThen(function() {
-    var expectedError = new Error('Awh crap');
     var newRelic = window.NREUM;
 
-    assert.expect(4);
+    assert.expect(6);
 
     assert.ok(newRelic,
       'The New Relic object (NREUM) should be added to the window');
@@ -22,17 +21,19 @@ test('Loading New Relic Browser', function(assert) {
     /* Now our errors are tracking, let's check they are
     caught by the extra Ember events like onerror */
 
-    window.NREUM.noticeError = function(actualError) {
+    window.NREUM.noticeError = function(error) {
 
       assert.ok(true,
         'noticeError should be called by Ember.onerror');
 
-      assert.equal(actualError, expectedError,
-        'noticeError should receive the error object');
+      assert.ok(error instanceof Error,
+        'noticeError should receive an error object');
 
     };
 
-    Ember.onerror(expectedError);
+    Ember.onerror(new Error('Awh crap'));
+
+    Ember.Logger.error('Whoops', 'We done messed up', {});
 
   });
 });

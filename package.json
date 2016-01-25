@@ -1,7 +1,7 @@
 {
   "name": "ember-new-relic",
   "version": "0.0.0",
-  "description": "The default blueprint for ember-cli addons.",
+  "description": "Adds New Relic to your Ember CLI app based on the app's environment",
   "directories": {
     "doc": "doc",
     "test": "tests"
@@ -11,7 +11,7 @@
     "start": "ember server",
     "test": "ember try:testall"
   },
-  "repository": "",
+  "repository": "https://github.com/sir-dunxalot/ember-new-relic",
   "engines": {
     "node": ">= 0.10.0"
   },
@@ -38,7 +38,12 @@
     "ember-try": "~0.0.8"
   },
   "keywords": [
-    "ember-addon"
+    "ember-addon",
+    "new relic",
+    "new",
+    "relic",
+    "bug",
+    "error"
   ],
   "dependencies": {
     "ember-cli-babel": "^5.1.5"
