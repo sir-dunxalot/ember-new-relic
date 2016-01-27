@@ -1,10 +1,15 @@
-# Ember New Relic
+Ember New Relic [![Build Status](https://travis-ci.org/sir-dunxalot/ember-new-relic.svg?branch=master)](https://travis-ci.org/sir-dunxalot/ember-new-relic)
+======
 
-This is an early-stage addon for New Relic Browser. All PRs and issues are welcome.
+This Ember addon adds [New Relic Browser](http://newrelic.com/browser-monitoring) to your app. All PRs and issues are welcome.
 
 - [Installation](#installation)
 - [Usage](#usage)
+  - [Basic Usage](#basic-usage)
+  - [Configuration](#configuration)
+  - [Environments](#environments)
 - [Content Security Policy](#content-security-policy)
+- [Development](#development)
 
 ## Installation
 
@@ -14,7 +19,9 @@ ember install ember-new-relic
 
 ## Usage
 
-Add your `applicationID` and `licenseKey` to `environment/config.js`:
+### Basic Usage
+
+Add your `applicationId` and `licenseKey` to `environment/config.js`:
 
 ```js
 /* config/environment.js */
@@ -31,7 +38,9 @@ module.exports = function(environment) {
 }
 ```
 
-You might also want to specify your agent:
+### Configuration
+
+You might also want to specify your agent, beacon, or other properties:
 
 ```js
 /* config/environment.js */
@@ -43,13 +52,20 @@ module.exports = function(environment) {
     newRelic: {
       agent: 'js-agent.newrelic.com/nr-768.min.js',
       applicationId: '97bfuo3FFd3',
-      licenseKey: 'ef234SgE4'
+      beacon: 'bam2.nr-data.net',
+      errorBeacon: 'bam3.nr-data.net',
+      licenseKey: 'ef234SgE4',
+      sa: 1,
     }
   };
 }
 ```
 
 All of the above can be found in your New Relic Browser's application settings.
+
+It is likely you will only have to set `applicationId`, `licenseKey`, and `agent` to match your New Relic code snippet.
+
+### Environments
 
 To enable New Relic Browser in certain environments, just include `applicationId` for those environments only:
 
@@ -117,3 +133,9 @@ module.exports = function(environment) {
   };
 }
 ```
+
+## Development
+
+Run the tests using `ember test` or by navigating to the `/tests` route in the browser.
+
+Please accompany PRs for bugs and new functionality with test coverage.
