@@ -120,7 +120,7 @@ module.exports = function(environment) {
   environment === 'development';
 
   var ENV = {
-    contentSecurityPolicy: {
+    newRelic: {
       licenseKey: 'ef234SgE4',
       applicationId: '97bfuo3FFd3',
     },
