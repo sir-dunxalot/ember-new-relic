@@ -38,7 +38,11 @@ module.exports = {
 
     trackingCode += ';NREUM.info=' + JSON.stringify(newRelicConfig);
 
-    return '<script type="text/javascript">' + trackingCode + '</script>';
+    return this.asScriptTag(trackingCode);
+  },
+
+  asScriptTag: function(string) {
+    return '<script type="text/javascript">' + string + '</script>';
   },
 
   contentFor: function(type, config) {
