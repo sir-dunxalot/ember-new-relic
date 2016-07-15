@@ -14,6 +14,12 @@ test('wantsSPAMonitoring(newRelicConfig) returns false', function(assert) {
   assert.equal(EmberNewRelic.wantsSPAMonitoring(this.newRelicConfig), false);
 });
 
+test('getNewRelicTrackingCode returns classicTrackingCode', function(assert) {
+  assert.equal(
+    EmberNewRelic.getNewRelicTrackingCode(this.newRelicConfig),
+    EmberNewRelic.classicTrackingCode(this.newRelicConfig));
+});
+
 QUnit.module("ember-new-relic | When config['ember-new-relic'].spaMonitoring is true", {
   setup() {
     this.newRelicConfig = {
