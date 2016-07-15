@@ -6,6 +6,16 @@ var defaultBeacon = 'bam.nr-data.net';
 module.exports = {
   name: 'ember-new-relic',
 
+  /**
+   Translates the newRelicConfig into a decision: SPA, or no SPA?
+
+   @param {{spaMonitoring: ?boolean}} newRelicConfig
+   @returns {boolean}
+  */
+  wantsSPAMonitoring: function(newRelicConfig) {
+    return !!newRelicConfig.spaMonitoring;
+  },
+
   getNewRelicConfig: function(config) {
     var newRelicConfig = config.newRelic || {};
 
