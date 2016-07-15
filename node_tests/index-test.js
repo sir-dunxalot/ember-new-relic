@@ -26,15 +26,26 @@ QUnit.module("ember-new-relic | When config['ember-new-relic'].spaMonitoring is 
         spaMonitoring: true,
         applicationId: 'test application ID',
         licenseKey: 'test license key',
+        agent: 'js-agent.newrelic.com/nr-spa-963.min.js',
     };
   },
 });
 
-/*
-skip('contentFor head-footer returns SPA tracking code', 0, function(assert) {
-  // TODO
+test('contentFor head-footer returns SPA tracking code', function(assert) {
+  var newRelicConfigAfterRemovingOurCustomConfig = Object.assign({}, this.newRelicConfig);
+  delete newRelicConfigAfterRemovingOurCustomConfig.spaMonitoring;
+
+  var original = EmberNewRelic.spaTrackingCode;
+  EmberNewRelic.spaTrackingCode = function() { return 'spa!'; };
+
+  try {
+    assert.equal(
+        EmberNewRelic.contentFor('head-footer', {newRelic: this.newRelicConfig}),
+        EmberNewRelic.spaTrackingCode(newRelicConfigAfterRemovingOurCustomConfig));
+  } finally {
+    EmberNewRelic.spaTrackingCode = original;
+  }
 });
-*/
 
 test('wantsSPAMonitoring(newRelicConfig) returns true', function(assert) {
   assert.equal(EmberNewRelic.wantsSPAMonitoring(this.newRelicConfig), true);
