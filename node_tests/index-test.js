@@ -39,3 +39,9 @@ skip('contentFor head-footer returns SPA tracking code', 0, function(assert) {
 test('wantsSPAMonitoring(newRelicConfig) returns true', function(assert) {
   assert.equal(EmberNewRelic.wantsSPAMonitoring(this.newRelicConfig), true);
 });
+
+test('getNewRelicTrackingCode returns spaTrackingCode', function(assert) {
+  assert.equal(
+    EmberNewRelic.getNewRelicTrackingCode(this.newRelicConfig),
+    EmberNewRelic.spaTrackingCode(this.newRelicConfig));
+});

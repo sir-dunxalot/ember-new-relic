@@ -30,7 +30,9 @@ module.exports = {
   },
 
   getNewRelicTrackingCode: function(newRelicConfig) {
-    return this.classicTrackingCode(newRelicConfig);
+    return (this.wantsSPAMonitoring(newRelicConfig) ?
+      this.spaTrackingCode(newRelicConfig) :
+      this.classicTrackingCode(newRelicConfig));
   },
 
   classicTrackingCode: function(newRelicConfig) {
@@ -43,6 +45,11 @@ module.exports = {
 
   asScriptTag: function(string) {
     return '<script type="text/javascript">' + string + '</script>';
+  },
+
+  spaTrackingCode: function(newRelicConfig) {
+    var trackingCode = '';
+    return this.asScriptTag(trackingCode);
   },
 
   contentFor: function(type, config) {
