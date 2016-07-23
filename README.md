@@ -1,4 +1,4 @@
-Ember New Relic [![Build Status](https://travis-ci.org/sir-dunxalot/ember-new-relic.svg?branch=master)](https://travis-ci.org/sir-dunxalot/ember-new-relic)
+Ember New Relic [![Build Status](https://travis-ci.org/sir-dunxalot/ember-new-relic.svg?branch=master)](https://travis-ci.org/sir-dunxalot/ember-new-relic) [![npm](https://img.shields.io/npm/v/ember-new-relic.svg)](https://www.npmjs.com/package/ember-new-relic)
 ======
 
 This Ember addon adds [New Relic Browser](http://newrelic.com/browser-monitoring) to your app. All PRs and issues are welcome.
