@@ -7,6 +7,7 @@ This Ember addon adds [New Relic Browser](http://newrelic.com/browser-monitoring
 - [Usage](#usage)
   - [Basic Usage](#basic-usage)
   - [Configuration](#configuration)
+    - [SPA Monitoring](#spa-monitoring)
   - [Environments](#environments)
 - [Content Security Policy](#content-security-policy)
 - [Development](#development)
@@ -50,20 +51,43 @@ module.exports = function(environment) {
 
   var ENV = {
     newRelic: {
-      agent: 'js-agent.newrelic.com/nr-768.min.js',
+      agent: 'js-agent.newrelic.com/nr-892.min.js',
       applicationId: '97bfuo3FFd3',
-      beacon: 'bam2.nr-data.net',
-      errorBeacon: 'bam3.nr-data.net',
+      beacon: 'bam.nr-data.net',
+      errorBeacon: 'bam.nr-data.net',
       licenseKey: 'ef234SgE4',
+      spaMonitoring: true,
       sa: 1,
     }
   };
 }
 ```
 
-All of the above can be found in your New Relic Browser's application settings.
+Value and descriptions for all of the above can be found in your New Relic Browser's application settings.
 
 It is likely you will only have to set `applicationId`, `licenseKey`, and `agent` to match your New Relic code snippet.
+
+#### SPA Monitoring
+
+New Relic released [SPA Monitoring](https://docs.newrelic.com/docs/browser/single-page-app-monitoring/get-started/welcome-single-page-app-monitoring) on July 12th 2016. By default, this addon does *not* use SPA Monitoring.
+
+If you want to use New Relic SPA Monitoring, you must enable `spaMonitoring` in your configuration as follows:
+
+```js
+/* config/environment.js */
+
+module.exports = function(environment) {
+  environment === 'development';
+
+  var ENV = {
+    newRelic: {
+      spaMonitoring: true,
+    }
+  };
+}
+```
+
+This will replace the default New Relic code snippet with the New Relic SPA code snippet.
 
 ### Environments
 

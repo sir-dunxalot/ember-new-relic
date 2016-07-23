@@ -1,7 +1,9 @@
 /* globals QUnit, test, EmberNewRelic */
 
+var objectAssign = require('object-assign');
+
 QUnit.module("ember-new-relic | When config['ember-new-relic'].spaMonitoring is false", {
-  setup() {
+  setup: function() {
     this.newRelicConfig = {
         spaMonitoring: false,
         applicationId: 'test application ID',
@@ -21,7 +23,7 @@ test('getNewRelicTrackingCode returns classicTrackingCode', function(assert) {
 });
 
 QUnit.module("ember-new-relic | When config['ember-new-relic'].spaMonitoring is true", {
-  setup() {
+  setup: function() {
     this.newRelicConfig = {
         spaMonitoring: true,
         applicationId: 'test application ID',
@@ -32,7 +34,7 @@ QUnit.module("ember-new-relic | When config['ember-new-relic'].spaMonitoring is 
 });
 
 test('contentFor head-footer returns SPA tracking code', function(assert) {
-  var newRelicConfigAfterRemovingOurCustomConfig = Object.assign({}, this.newRelicConfig);
+  var newRelicConfigAfterRemovingOurCustomConfig = objectAssign({}, this.newRelicConfig);
   delete newRelicConfigAfterRemovingOurCustomConfig.spaMonitoring;
 
   var original = EmberNewRelic.spaTrackingCode;

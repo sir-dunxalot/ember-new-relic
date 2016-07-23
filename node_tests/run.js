@@ -1,6 +1,5 @@
 // jshint node: true
 var testrunner = require('qunit');
-var process = require('process');
 
 var tests = [
   {

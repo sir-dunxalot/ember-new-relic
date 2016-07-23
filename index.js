@@ -34,6 +34,7 @@ module.exports = {
 
   getNewRelicTrackingCode: function(newRelicConfig) {
     var wantsSPAMonitoring = this.wantsSPAMonitoring(newRelicConfig);
+
     delete newRelicConfig.spaMonitoring;
 
     return (wantsSPAMonitoring ?

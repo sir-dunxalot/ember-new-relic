@@ -8,8 +8,9 @@
   },
   "scripts": {
     "build": "ember build",
+    "posttest": "cd ../",
     "start": "ember server",
-    "test": "ember try:testall"
+    "test": "cd node_tests && node run.js"
   },
   "repository": "https://github.com/sir-dunxalot/ember-new-relic",
   "engines": {
