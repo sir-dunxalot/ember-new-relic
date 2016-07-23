@@ -10,7 +10,9 @@ var tests = [
     tests: 'index-test.js',
   },
 ];
+
 testrunner.run(tests, function(error, report) {
+
   if (error) {
     console.error('error:', error);
     process.exitCode = 2;
