@@ -1,12 +1,37 @@
 /* jshint node: true */
 'use strict';
 
+var writeFile = require('broccoli-file-creator');
+var mergeTrees = require('broccoli-merge-trees');
+
 var defaultBeacon = 'bam.nr-data.net';
 var defaultAgentClassic = 'js-agent.newrelic.com/nr-892.min.js';
 var defaultAgentSPA = 'js-agent.newrelic.com/nr-spa-963.min.js';
 
 module.exports = {
   name: 'ember-new-relic',
+
+  outputPath: '',
+
+  newRelicConfig: null,
+
+  loadExternal: false,
+
+  included: function(app) {
+    this._super.included ? this._super.included.apply(this, arguments) : this._super(app);
+
+    var env  = process.env.EMBER_ENV;
+    var options = (this.app && this.app.options && this.app.options['ember-new-relic']) || {};
+
+    this.newRelicConfig = this.getNewRelicConfig(this.project.config(env).newRelic);
+
+    this.loadExternal = options.loadExternal || this.loadExternal;
+    this.outputPath = options.outputPath || this.outputPath;
+  },
+
+  isDevelopingAddon: function() {
+    return true;
+  },
 
   /**
    Translates the newRelicConfig into a decision: SPA, or no SPA?
@@ -19,7 +44,7 @@ module.exports = {
   },
 
   getNewRelicConfig: function(config) {
-    var newRelicConfig = config.newRelic || {};
+    var newRelicConfig = config || {};
 
     return {
       agent: newRelicConfig.agent,  // Default applied by tracker function
@@ -34,12 +59,16 @@ module.exports = {
 
   getNewRelicTrackingCode: function(newRelicConfig) {
     var wantsSPAMonitoring = this.wantsSPAMonitoring(newRelicConfig);
+    var loadExternal = this.loadExternal;
+    var outputPath = this.outputPath;
 
-    delete newRelicConfig.spaMonitoring;
-
-    return (wantsSPAMonitoring ?
-      this.spaTrackingCode(newRelicConfig) :
-      this.classicTrackingCode(newRelicConfig));
+    if (loadExternal) {
+      return this.asScriptTag(outputPath);
+    } else {
+      return this.asInlineScriptTag(wantsSPAMonitoring ?
+        this.spaTrackingCode(newRelicConfig) :
+        this.classicTrackingCode(newRelicConfig));
+    }
   },
 
   classicTrackingCode: function(newRelicConfig) {
@@ -51,11 +80,15 @@ module.exports = {
 
     trackingCode += ';NREUM.info=' + JSON.stringify(newRelicConfig);
 
-    return this.asScriptTag(trackingCode);
+    return trackingCode;
   },
 
-  asScriptTag: function(string) {
+  asInlineScriptTag: function(string) {
     return '<script type="text/javascript">' + string + '</script>';
+  },
+
+  asScriptTag: function(path) {
+    return '<script src="' + path + '"></script>';
   },
 
   spaTrackingCode: function(newRelicConfig) {
@@ -69,14 +102,37 @@ module.exports = {
       '",agent:"' + newRelicConfig.agent +
       '"},w=d&&l&&l[h]&&!/CriOS/.test(navigator.userAgent),y=e.exports={offset:a(),origin:m,features:{},xhrWrappable:w};u[h]?(u[h]("DOMContentLoaded",i,!1),f[h]("load",r,!1)):(u[p]("onreadystatechange",o),f[p]("onload",r)),c("mark",["firstbyte",a()],null,"api");var g=0},{}]},{},["loader",2,14,5,3,4]);';
     trackingCode += ';NREUM.info=' + JSON.stringify(newRelicConfig);
-    return this.asScriptTag(trackingCode);
+
+    return trackingCode;
   },
 
-  contentFor: function(type, config) {
-    var newRelicConfig = this.getNewRelicConfig(config);
+  contentFor: function(type) {
+    var newRelicConfig = this.newRelicConfig;
 
     if (type === 'head-footer' && newRelicConfig.applicationID && newRelicConfig.licenseKey) {
       return this.getNewRelicTrackingCode(newRelicConfig);
     }
   },
+
+  treeForPublic: function(tree) {
+    var newRelicConfig = this.newRelicConfig;
+    var wantsSPAMonitoring;
+    var loadExternal = this.loadExternal;
+    var outputPath = this.outputPath;
+    var file;
+
+    if (loadExternal && outputPath && newRelicConfig.applicationID && newRelicConfig.licenseKey) {
+      wantsSPAMonitoring = this.wantsSPAMonitoring(newRelicConfig);
+
+      file = writeFile(outputPath, wantsSPAMonitoring ? this.spaTrackingCode(newRelicConfig) : this.classicTrackingCode(newRelicConfig));
+    }
+
+    tree = this._super.treeForPublic ? this._super.treeForPublic.apply(this, arguments) : this._super(tree);
+
+    if (!tree) {
+      return file;
+    } else {
+      return mergeTrees([tree, file]);
+    }
+  }
 };
