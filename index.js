@@ -62,9 +62,12 @@ module.exports = {
     var loadExternal = this.loadExternal;
     var outputPath = this.outputPath;
 
-    if (loadExternal) {
+    // Write the external script tag.
+    // If there is no output path, write the inline script tag.
+    // Otherwise it is up to the dev to include it.
+    if (loadExternal && outputPath) {
       return this.asScriptTag(outputPath);
-    } else {
+    } else if(!outputPath) {
       return this.asInlineScriptTag(wantsSPAMonitoring ?
         this.spaTrackingCode(newRelicConfig) :
         this.classicTrackingCode(newRelicConfig));
@@ -121,7 +124,7 @@ module.exports = {
     var outputPath = this.outputPath;
     var file;
 
-    if (loadExternal && outputPath && newRelicConfig.applicationID && newRelicConfig.licenseKey) {
+    if (outputPath && newRelicConfig.applicationID && newRelicConfig.licenseKey) {
       wantsSPAMonitoring = this.wantsSPAMonitoring(newRelicConfig);
 
       file = writeFile(outputPath, wantsSPAMonitoring ? this.spaTrackingCode(newRelicConfig) : this.classicTrackingCode(newRelicConfig));
