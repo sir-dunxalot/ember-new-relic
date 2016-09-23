@@ -12,7 +12,7 @@ module.exports = function(defaults) {
     case '2':
       options = {
         loadExternal: true,
-        outputPath: ''
+        outputPath: 'new-relic.js'
       };
       break;
   }
