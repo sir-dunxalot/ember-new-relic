@@ -3,8 +3,23 @@
 var EmberAddon = require('ember-cli/lib/broccoli/ember-addon');
 
 module.exports = function(defaults) {
+  var options;
+
+  switch (process.env.TEST_SCENARIO) {
+    case undefined:
+    case '1':
+      break;
+    case '2':
+      options = {
+        loadExternal: true,
+        outputPath: ''
+      };
+      break;
+  }
+
   var app = new EmberAddon(defaults, {
     // Add options here
+    'ember-new-relic': options
   });
 
   /*
