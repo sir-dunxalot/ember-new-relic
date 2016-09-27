@@ -25,8 +25,12 @@ module.exports = {
 
     this.newRelicConfig = this.getNewRelicConfig(this.project.config(env).newRelic);
 
-    this.loadExternal = options.loadExternal || this.loadExternal;
-    this.outputPath = options.outputPath || this.outputPath;
+    var loadExternal = this.loadExternal = options.loadExternal || this.loadExternal;
+    var outputPath = this.outputPath = options.outputPath || this.outputPath;
+
+    if (loadExternal && !outputPath) {
+      throw this.ui.writeError(new Error('Cannot load external new-relic script from undefined output'));
+    }
   },
 
   isDevelopingAddon: function() {

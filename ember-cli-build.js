@@ -15,6 +15,11 @@ module.exports = function(defaults) {
         outputPath: 'new-relic.js'
       };
       break;
+    case '3':
+      options = {
+        loadExternal: true
+      };
+      break;
   }
 
   var app = new EmberAddon(defaults, {
