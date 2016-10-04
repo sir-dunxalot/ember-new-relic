@@ -11,13 +11,7 @@ module.exports = function(defaults) {
       break;
     case '2':
       options = {
-        loadExternal: true,
-        outputPath: 'new-relic.js'
-      };
-      break;
-    case '3':
-      options = {
-        loadExternal: true
+        importToVendor: false
       };
       break;
   }

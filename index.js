@@ -11,11 +11,11 @@ var defaultAgentSPA = 'js-agent.newrelic.com/nr-spa-963.min.js';
 module.exports = {
   name: 'ember-new-relic',
 
-  outputPath: '',
+  outputPath: 'new-relic.js',
 
   newRelicConfig: null,
 
-  loadExternal: false,
+  importToVendor: true,
 
   included: function(app) {
     this._super.included ? this._super.included.apply(this, arguments) : this._super(app);
@@ -25,11 +25,15 @@ module.exports = {
 
     this.newRelicConfig = this.getNewRelicConfig(this.project.config(env).newRelic);
 
-    var loadExternal = this.loadExternal = options.loadExternal || this.loadExternal;
-    var outputPath = this.outputPath = options.outputPath || this.outputPath;
+    var importToVendor = this.importToVendor = 'importToVendor' in options ? options.importToVendor : this.importToVendor;
+    var outputPath = this.outputPath = 'outputPath' in options ? options.outputPath : this.outputPath;
 
-    if (loadExternal && !outputPath) {
+    if (!importToVendor && !outputPath) {
       throw this.ui.writeError(new Error('Cannot load external new-relic script from undefined output'));
+    }
+
+    if (importToVendor) {
+      this.app.import('vendor/' + outputPath);
     }
   },
 
@@ -63,19 +67,8 @@ module.exports = {
 
   getNewRelicTrackingCode: function(newRelicConfig) {
     var wantsSPAMonitoring = this.wantsSPAMonitoring(newRelicConfig);
-    var loadExternal = this.loadExternal;
-    var outputPath = this.outputPath;
 
-    // Write the external script tag.
-    // If there is no output path, write the inline script tag.
-    // Otherwise it is up to the dev to include it.
-    if (loadExternal && outputPath) {
-      return this.asScriptTag(outputPath);
-    } else if(!outputPath) {
-      return this.asInlineScriptTag(wantsSPAMonitoring ?
-        this.spaTrackingCode(newRelicConfig) :
-        this.classicTrackingCode(newRelicConfig));
-    }
+    return wantsSPAMonitoring ? this.spaTrackingCode(newRelicConfig) : this.classicTrackingCode(newRelicConfig);
   },
 
   classicTrackingCode: function(newRelicConfig) {
@@ -88,10 +81,6 @@ module.exports = {
     trackingCode += ';NREUM.info=' + JSON.stringify(newRelicConfig);
 
     return trackingCode;
-  },
-
-  asInlineScriptTag: function(string) {
-    return '<script type="text/javascript">' + string + '</script>';
   },
 
   asScriptTag: function(path) {
@@ -113,33 +102,41 @@ module.exports = {
     return trackingCode;
   },
 
-  contentFor: function(type) {
+  writeTrackingCodeTree: function(tree) {
     var newRelicConfig = this.newRelicConfig;
-
-    if (type === 'head-footer' && newRelicConfig.applicationID && newRelicConfig.licenseKey) {
-      return this.getNewRelicTrackingCode(newRelicConfig);
-    }
-  },
-
-  treeForPublic: function(tree) {
-    var newRelicConfig = this.newRelicConfig;
-    var wantsSPAMonitoring;
-    var loadExternal = this.loadExternal;
     var outputPath = this.outputPath;
     var file;
 
     if (outputPath && newRelicConfig.applicationID && newRelicConfig.licenseKey) {
-      wantsSPAMonitoring = this.wantsSPAMonitoring(newRelicConfig);
-
-      file = writeFile(outputPath, wantsSPAMonitoring ? this.spaTrackingCode(newRelicConfig) : this.classicTrackingCode(newRelicConfig));
+      file = writeFile(outputPath, this.getNewRelicTrackingCode(newRelicConfig));
     }
 
-    tree = this._super.treeForPublic ? this._super.treeForPublic.apply(this, arguments) : this._super(tree);
-
-    if (!tree) {
-      return file;
-    } else {
-      return mergeTrees([tree, file]);
+    if (file) {
+      if (tree) {
+        return mergeTrees([tree, file]);
+      } else {
+        return file;
+      }
     }
+
+    return tree;
+  },
+
+  contentFor: function(type) {
+    var newRelicConfig = this.newRelicConfig;
+    var importToVendor = this.importToVendor;
+    var outputPath = this.outputPath;
+
+    if (type === 'head-footer' && !importToVendor && outputPath && newRelicConfig.applicationID && newRelicConfig.licenseKey) {
+      return this.asScriptTag(outputPath);
+    }
+  },
+
+  treeForVendor: function(tree) {
+    return this.importToVendor ? this.writeTrackingCodeTree(tree) : tree;
+  },
+
+  treeForPublic: function(tree) {
+    return !this.importToVendor ? this.writeTrackingCodeTree(tree) : tree;
   }
 };
