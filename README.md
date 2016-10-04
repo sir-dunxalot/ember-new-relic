@@ -22,7 +22,7 @@ ember install ember-new-relic
 
 ### Basic Usage
 
-Add your `applicationId` and `licenseKey` to `environment/config.js`:
+Add your `applicationId` and `licenseKey` to `config/environment.js`:
 
 ```js
 /* config/environment.js */
