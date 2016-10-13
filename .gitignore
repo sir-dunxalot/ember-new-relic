@@ -4,6 +4,9 @@
 /dist
 /tmp
 
+# test tmp output
+/node_tests/tmp
+
 # dependencies
 /node_modules
 /bower_components
