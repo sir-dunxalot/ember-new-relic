@@ -7,6 +7,7 @@ var path = require('path');
 
 QUnit.module("ember-new-relic | When config['ember-new-relic'].spaMonitoring is false", {
   setup: function() {
+    EmberNewRelic.isValidNewRelicConfig = false;
     this.newRelicConfig = EmberNewRelic.getNewRelicConfig({
         spaMonitoring: false,
         applicationId: 'test application ID',
@@ -27,6 +28,7 @@ test('getNewRelicTrackingCode returns classicTrackingCode', function(assert) {
 
 QUnit.module("ember-new-relic | When config['ember-new-relic'].spaMonitoring is true", {
   setup: function() {
+    EmberNewRelic.isValidNewRelicConfig = false;
     this.newRelicConfig = EmberNewRelic.getNewRelicConfig({
         spaMonitoring: true,
         applicationId: 'test application ID',
@@ -36,7 +38,7 @@ QUnit.module("ember-new-relic | When config['ember-new-relic'].spaMonitoring is 
   },
 });
 
-test('contentFor head-footer returns script tag with src to outputPath if importToVendor option is false', function(assert) {
+test('contentFor head-footer returns script tag with src to outputPath if importToVendor option is false and newRelicConfig is valid', function(assert) {
   var newRelicConfigAfterRemovingOurCustomConfig = objectAssign({}, this.newRelicConfig);
   delete newRelicConfigAfterRemovingOurCustomConfig.spaMonitoring;
 
@@ -45,8 +47,14 @@ test('contentFor head-footer returns script tag with src to outputPath if import
 
   EmberNewRelic.newRelicConfig = this.newRelicConfig;
   EmberNewRelic.importToVendor = false;
+  EmberNewRelic.isValidNewRelicConfig = false;
 
   try {
+    assert.equal(
+        EmberNewRelic.contentFor('head-footer'),
+        undefined);
+
+    EmberNewRelic.isValidNewRelicConfig = true;
     assert.equal(
         EmberNewRelic.contentFor('head-footer'),
         EmberNewRelic.asScriptTag(EmberNewRelic.outputPath));
@@ -67,6 +75,7 @@ test('getNewRelicTrackingCode returns spaTrackingCode', function(assert) {
 
 QUnit.module("ember-new-relic | When outputPath, applicationId, and licenseKey are defined", {
   setup: function() {
+    EmberNewRelic.isValidNewRelicConfig = false;
     this.newRelicConfig = EmberNewRelic.getNewRelicConfig({
         spaMonitoring: true,
         applicationId: 'test application ID',
@@ -76,10 +85,21 @@ QUnit.module("ember-new-relic | When outputPath, applicationId, and licenseKey a
   }
 });
 
-test('writeTrackingCodeTree returns a tree containing a file that has the tracking code.', function(assert) {
+test('writeTrackingCodeTree returns a tree containing a file that has the tracking code when newRelicConfig is valid', function(assert) {
   var newRelicConfig = EmberNewRelic.newRelicConfig = this.newRelicConfig;
   var tree = EmberNewRelic.writeTrackingCodeTree();
-  var builder = new broccoli.Builder(tree);
+  var builder;
+
+  // Tree should be undefined
+  assert.equal(tree, undefined);
+
+  // When NewRelicConfig is valid, tree will be `ok`.
+  EmberNewRelic.isValidNewRelicConfig = true;
+  tree = EmberNewRelic.writeTrackingCodeTree();
+
+  assert.ok(tree);
+
+  builder = new broccoli.Builder(tree);
 
   // Stop the test runner for async tests.
   stop();

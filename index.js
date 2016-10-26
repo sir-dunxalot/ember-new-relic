@@ -17,28 +17,31 @@ module.exports = {
 
   importToVendor: true,
 
-  included: function(app) {
-    this._super.included ? this._super.included.apply(this, arguments) : this._super(app);
+  included: function() {
+    // Execute the included method of the parent class.
+    this._super.included.apply(this, arguments);
 
     var env  = process.env.EMBER_ENV;
     var options = (this.app && this.app.options && this.app.options['ember-new-relic']) || {};
 
-    this.newRelicConfig = this.getNewRelicConfig(this.project.config(env).newRelic);
+    var newRelicConfig = this.newRelicConfig = this.getNewRelicConfig(this.project.config(env).newRelic);
 
     var importToVendor = this.importToVendor = 'importToVendor' in options ? options.importToVendor : this.importToVendor;
     var outputPath = this.outputPath = 'outputPath' in options ? options.outputPath : this.outputPath;
+    var isValidNewRelicConfig = this.isValidNewRelicConfig = newRelicConfig.applicationID && newRelicConfig.licenseKey;
+
+    if (!isValidNewRelicConfig) {
+      // Use writeLine instead of writeWarnLine because of differences in ember-cli versions.
+      this.ui.writeLine('New Relic config needs `applicationId` and `licenseKey` properties in order to output New Relic script.', 'WARNING');
+    }
 
     if (!importToVendor && !outputPath) {
       throw this.ui.writeError(new Error('Cannot load external new-relic script from undefined output'));
     }
 
-    if (importToVendor) {
+    if (importToVendor && isValidNewRelicConfig) {
       this.app.import('vendor/' + outputPath);
     }
-  },
-
-  isDevelopingAddon: function() {
-    return true;
   },
 
   /**
@@ -104,10 +107,11 @@ module.exports = {
 
   writeTrackingCodeTree: function(tree) {
     var newRelicConfig = this.newRelicConfig;
+    var isValidNewRelicConfig = this.isValidNewRelicConfig;
     var outputPath = this.outputPath;
     var file;
 
-    if (outputPath && newRelicConfig.applicationID && newRelicConfig.licenseKey) {
+    if (outputPath && isValidNewRelicConfig) {
       file = writeFile(outputPath, this.getNewRelicTrackingCode(newRelicConfig));
     }
 
@@ -123,11 +127,11 @@ module.exports = {
   },
 
   contentFor: function(type) {
-    var newRelicConfig = this.newRelicConfig;
+    var isValidNewRelicConfig = this.isValidNewRelicConfig;
     var importToVendor = this.importToVendor;
     var outputPath = this.outputPath;
 
-    if (type === 'head-footer' && !importToVendor && outputPath && newRelicConfig.applicationID && newRelicConfig.licenseKey) {
+    if (type === 'head-footer' && !importToVendor && outputPath && isValidNewRelicConfig) {
       return this.asScriptTag(outputPath);
     }
   },
