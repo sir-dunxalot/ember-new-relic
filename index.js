@@ -31,8 +31,7 @@ module.exports = {
     var isValidNewRelicConfig = this.isValidNewRelicConfig = newRelicConfig.applicationID && newRelicConfig.licenseKey;
 
     if (!isValidNewRelicConfig) {
-      // Use writeLine instead of writeWarnLine because of differences in ember-cli versions.
-      this.ui.writeLine('New Relic config needs `applicationId` and `licenseKey` properties in order to output New Relic script.', 'WARNING');
+      this._writeWarnLine('New Relic config needs `applicationId` and `licenseKey` properties in order to output New Relic script.');
     }
 
     if (!importToVendor && !outputPath) {
@@ -41,6 +40,20 @@ module.exports = {
 
     if (importToVendor && isValidNewRelicConfig) {
       this.app.import('vendor/' + outputPath);
+    }
+  },
+
+  /**
+   A wrapper method to write a message with writeWarnLine or writeLine, depending on which version
+   of ember-cli is used
+
+   @param {string} msg Message to print
+   */
+  _writeWarnLine: function(msg) {
+    if (this.ui.writeWarnLine) {
+      this.ui.writeWarnLine(msg);
+    } else {
+      this.ui.writeLine(msg, 'WARNING');
     }
   },
 
