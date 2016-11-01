@@ -133,6 +133,53 @@ module.exports = function(environment) {
 }
 ```
 
+### Manual Script Loading
+
+By default the New Relic code snippet is imported into `vendor.js`.
+
+If you want to manually import the snippet from an external JS file, configure `ember-cli-build.js` with `ember-new-relic` options as follows:
+
+```js
+/* ember-cli-build.js */
+module.exports = function(defaults) {
+    var app = new EmberApp(defaults, {
+      'ember-new-relic': {
+        importToVendor: false
+      }
+    });
+
+    return app.toTree();
+};
+```
+
+Prepare your `app/index.html` with the New Relic script, placed above the `vendor.js` script as follows:
+
+```html
+<script src="new-relic.js"></script>
+<script src="assets/vendor.js"></script>
+```
+
+### Change the Script Path
+
+The New Relic code's default output path is `new-relic.js`, accessible at the root of the output folder.
+
+If you want to change the output path, configure `ember-cli-build.js` with `ember-new-relic` options as follows:
+
+```javascript
+/* ember-cli-build.js */
+module.exports = function(defaults) {
+    var app = new EmberApp(defaults, {
+      'ember-new-relic': {
+        outputPath: 'assets/new-relic.js'
+      }
+    });
+
+    return app.toTree();
+};
+```
+
+When used in conjunction with `importToVendor` disabled, remember to update the path in `app/index.html`.
+
 ## Content Security Policy
 
 To avoid browser errors, add the following to your CSP:
@@ -152,7 +199,7 @@ module.exports = function(environment) {
     contentSecurityPolicy: {
       'connect-src': "'self' https://*.nr-data.net",
       'img-src': "'self' https://*.nr-data.net",
-      'script-src': "'self' 'unsafe-inline' http://*.newrelic.com https://*.nr-data.net http://*.nr-data.net",
+      'script-src': "'self' http://*.newrelic.com https://*.nr-data.net http://*.nr-data.net",
     },
   };
 }
