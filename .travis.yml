@@ -9,6 +9,10 @@ cache:
   directories:
     - node_modules
 
+env:
+  - TEST_SCENARIO=1
+  - TEST_SCENARIO=2
+
 matrix:
   fast_finish: true
   allow_failures:

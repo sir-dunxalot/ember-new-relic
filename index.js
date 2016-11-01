@@ -1,12 +1,61 @@
 /* jshint node: true */
 'use strict';
 
+var writeFile = require('broccoli-file-creator');
+var mergeTrees = require('broccoli-merge-trees');
+
 var defaultBeacon = 'bam.nr-data.net';
 var defaultAgentClassic = 'js-agent.newrelic.com/nr-892.min.js';
 var defaultAgentSPA = 'js-agent.newrelic.com/nr-spa-963.min.js';
 
 module.exports = {
   name: 'ember-new-relic',
+
+  outputPath: 'new-relic.js',
+
+  newRelicConfig: null,
+
+  importToVendor: true,
+
+  included: function() {
+    // Execute the included method of the parent class.
+    this._super.included.apply(this, arguments);
+
+    var env  = process.env.EMBER_ENV;
+    var options = (this.app && this.app.options && this.app.options['ember-new-relic']) || {};
+
+    var newRelicConfig = this.newRelicConfig = this.getNewRelicConfig(this.project.config(env).newRelic);
+
+    var importToVendor = this.importToVendor = 'importToVendor' in options ? options.importToVendor : this.importToVendor;
+    var outputPath = this.outputPath = 'outputPath' in options ? options.outputPath : this.outputPath;
+    var isValidNewRelicConfig = this.isValidNewRelicConfig = newRelicConfig.applicationID && newRelicConfig.licenseKey;
+
+    if (!isValidNewRelicConfig) {
+      this._writeWarnLine('New Relic config needs `applicationId` and `licenseKey` properties in order to output New Relic script.');
+    }
+
+    if (!importToVendor && !outputPath) {
+      throw this.ui.writeError(new Error('Cannot load external new-relic script from undefined output'));
+    }
+
+    if (importToVendor && isValidNewRelicConfig) {
+      this.app.import('vendor/' + outputPath);
+    }
+  },
+
+  /**
+   A wrapper method to write a message with writeWarnLine or writeLine, depending on which version
+   of ember-cli is used
+
+   @param {string} msg Message to print
+   */
+  _writeWarnLine: function(msg) {
+    if (this.ui.writeWarnLine) {
+      this.ui.writeWarnLine(msg);
+    } else {
+      this.ui.writeLine(msg, 'WARNING');
+    }
+  },
 
   /**
    Translates the newRelicConfig into a decision: SPA, or no SPA?
@@ -19,7 +68,7 @@ module.exports = {
   },
 
   getNewRelicConfig: function(config) {
-    var newRelicConfig = config.newRelic || {};
+    var newRelicConfig = config || {};
 
     return {
       agent: newRelicConfig.agent,  // Default applied by tracker function
@@ -35,11 +84,7 @@ module.exports = {
   getNewRelicTrackingCode: function(newRelicConfig) {
     var wantsSPAMonitoring = this.wantsSPAMonitoring(newRelicConfig);
 
-    delete newRelicConfig.spaMonitoring;
-
-    return (wantsSPAMonitoring ?
-      this.spaTrackingCode(newRelicConfig) :
-      this.classicTrackingCode(newRelicConfig));
+    return wantsSPAMonitoring ? this.spaTrackingCode(newRelicConfig) : this.classicTrackingCode(newRelicConfig);
   },
 
   classicTrackingCode: function(newRelicConfig) {
@@ -51,11 +96,11 @@ module.exports = {
 
     trackingCode += ';NREUM.info=' + JSON.stringify(newRelicConfig);
 
-    return this.asScriptTag(trackingCode);
+    return trackingCode;
   },
 
-  asScriptTag: function(string) {
-    return '<script type="text/javascript">' + string + '</script>';
+  asScriptTag: function(path) {
+    return '<script src="' + path + '"></script>';
   },
 
   spaTrackingCode: function(newRelicConfig) {
@@ -69,14 +114,46 @@ module.exports = {
       '",agent:"' + newRelicConfig.agent +
       '"},w=d&&l&&l[h]&&!/CriOS/.test(navigator.userAgent),y=e.exports={offset:a(),origin:m,features:{},xhrWrappable:w};u[h]?(u[h]("DOMContentLoaded",i,!1),f[h]("load",r,!1)):(u[p]("onreadystatechange",o),f[p]("onload",r)),c("mark",["firstbyte",a()],null,"api");var g=0},{}]},{},["loader",2,14,5,3,4]);';
     trackingCode += ';NREUM.info=' + JSON.stringify(newRelicConfig);
-    return this.asScriptTag(trackingCode);
+
+    return trackingCode;
   },
 
-  contentFor: function(type, config) {
-    var newRelicConfig = this.getNewRelicConfig(config);
+  writeTrackingCodeTree: function(tree) {
+    var newRelicConfig = this.newRelicConfig;
+    var isValidNewRelicConfig = this.isValidNewRelicConfig;
+    var outputPath = this.outputPath;
+    var file;
 
-    if (type === 'head-footer' && newRelicConfig.applicationID && newRelicConfig.licenseKey) {
-      return this.getNewRelicTrackingCode(newRelicConfig);
+    if (outputPath && isValidNewRelicConfig) {
+      file = writeFile(outputPath, this.getNewRelicTrackingCode(newRelicConfig));
+    }
+
+    if (file) {
+      if (tree) {
+        return mergeTrees([tree, file]);
+      } else {
+        return file;
+      }
+    }
+
+    return tree;
+  },
+
+  contentFor: function(type) {
+    var isValidNewRelicConfig = this.isValidNewRelicConfig;
+    var importToVendor = this.importToVendor;
+    var outputPath = this.outputPath;
+
+    if (type === 'head-footer' && !importToVendor && outputPath && isValidNewRelicConfig) {
+      return this.asScriptTag(outputPath);
     }
   },
+
+  treeForVendor: function(tree) {
+    return this.importToVendor ? this.writeTrackingCodeTree(tree) : tree;
+  },
+
+  treeForPublic: function(tree) {
+    return !this.importToVendor ? this.writeTrackingCodeTree(tree) : tree;
+  }
 };
