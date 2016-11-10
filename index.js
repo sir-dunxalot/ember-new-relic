@@ -21,6 +21,9 @@ module.exports = {
     // Execute the included method of the parent class.
     this._super.included.apply(this, arguments);
 
+    // Don't include the new relic script if running in a fastboot environment.
+    if (process.env.EMBER_CLI_FASTBOOT) return;
+
     var env  = process.env.EMBER_ENV;
     var options = (this.app && this.app.options && this.app.options['ember-new-relic']) || {};
 
