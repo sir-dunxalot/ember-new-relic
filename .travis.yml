@@ -9,17 +9,14 @@ cache:
   directories:
     - node_modules
 
-env:
-  - TEST_SCENARIO=1
-  - TEST_SCENARIO=2
-
 matrix:
   fast_finish: true
   allow_failures:
     - env: EMBER_TRY_SCENARIO=ember-canary
   include:
     - env: TEST_SUITE=frontend # ember tests (tests dir)
-    - env: TEST_SUITE=backend # node tests (node_tests dir)
+    - env: TEST_SUITE=backend TEST_SCENARIO=1 # node tests (node_tests dir)
+    - env: TEST_SUITE=backend TEST_SCENARIO=2 # node tests (node_tests dir)
 
 before_install:
   - export PATH=/usr/local/phantomjs-2.0.0/bin:$PATH
@@ -32,5 +29,5 @@ install:
   - bower install
 
 script:
-  - if [ "$TEST_SUITE" = "backend" ]; npm test; fi
-  - if [ "$TEST_SUITE" = "frontend" ]; ember test; fi
+  - if [ "$TEST_SUITE" = "backend" ]; then npm test; fi
+  - if [ "$TEST_SUITE" = "frontend" ]; then ember test; fi
