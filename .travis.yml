@@ -17,6 +17,9 @@ matrix:
   fast_finish: true
   allow_failures:
     - env: EMBER_TRY_SCENARIO=ember-canary
+  include:
+    - env: TEST_SUITE=frontend # ember tests (tests dir)
+    - env: TEST_SUITE=backend # node tests (node_tests dir)
 
 before_install:
   - export PATH=/usr/local/phantomjs-2.0.0/bin:$PATH
@@ -29,4 +32,5 @@ install:
   - bower install
 
 script:
-  - npm test
+  - if [ "$TEST_SUITE" = "backend" ]; npm test; fi
+  - if [ "$TEST_SUITE" = "frontend" ]; ember test; fi
