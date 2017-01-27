@@ -28,7 +28,9 @@ export function initialize() {
       // Ignore
     }
 
-    console.error(error.stack);
+    if (error && error.stack) {
+      console.error(error.stack);
+    }
   }
 
   function generateError(cause, stack) {
