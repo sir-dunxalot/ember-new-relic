@@ -10,7 +10,11 @@ export function initialize() {
   function mustIgnoreError(error) {
     // Ember 2.X seems to not catch `TransitionAborted` errors caused by regular redirects. We don't want these errors to show up in NewRelic so we have to filter them ourselfs.
     // Once the issue https://github.com/emberjs/ember.js/issues/12505 is resolved we can remove this ignored error.
-    return (error.name === 'TransitionAborted');
+    if (Ember.isNone(error)) {
+      return false;
+    }
+    const errorName = Ember.get(error, 'name');
+    return errorName === 'TransitionAborted';
   }
 
   function handleError(error) {
