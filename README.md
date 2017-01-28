@@ -51,7 +51,7 @@ module.exports = function(environment) {
 
   var ENV = {
     newRelic: {
-      agent: 'js-agent.newrelic.com/nr-892.min.js',
+      agent: 'js-agent.newrelic.com/nr-1016.min.js',
       applicationId: '97bfuo3FFd3',
       beacon: 'bam.nr-data.net',
       errorBeacon: 'bam.nr-data.net',
