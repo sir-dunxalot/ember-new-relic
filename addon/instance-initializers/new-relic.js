@@ -41,11 +41,24 @@ export function initialize() {
     return error;
   }
 
-  Ember.onerror = handleError;
+  const _oldOnerror = Ember.onerror;
+
+  Ember.onerror = function(error) {
+    if (Ember.typeOf(_oldOnerror) === 'function') {
+      _oldOnerror.call(this, error);
+    }
+    handleError(error);
+  };
 
   Ember.RSVP.on('error', handleError);
 
-  Ember.Logger.error = function(message, cause, stack) {
+  const _oldLoggerError = Ember.Logger.error;
+
+  Ember.Logger.error = function(...args) {
+    const [, cause, stack] = args;
+    if (Ember.typeOf(_oldLoggerError) === 'function') {
+      _oldLoggerError.call(Ember.Logger, ...args);
+    }
     handleError(generateError(cause, stack));
   };
 }
