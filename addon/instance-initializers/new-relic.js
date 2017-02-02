@@ -42,14 +42,14 @@ export function initialize() {
       _oldOnerror.call(this, error);
     }
     handleError(error);
-  }
+  };
 
   Ember.RSVP.on('error', handleError);
 
   const _oldLoggerError = Ember.Logger.error;
 
   Ember.Logger.error = function(...args) {
-    const [message, cause, stack] = args;
+    const [, cause, stack] = args;
     if (Ember.typeOf(_oldLoggerError) === 'function') {
       _oldLoggerError.call(Ember.Logger, ...args);
     }
