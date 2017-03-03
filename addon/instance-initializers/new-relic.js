@@ -28,9 +28,7 @@ export function initialize() {
       // Ignore
     }
 
-    if (error && error.stack) {
-      console.error(error.stack);
-    }
+    console.error(error);
   }
 
   function generateError(cause, stack) {
@@ -45,8 +43,8 @@ export function initialize() {
 
   Ember.RSVP.on('error', handleError);
 
-  Ember.Logger.error = function(message, cause, stack) {
-    handleError(generateError(cause, stack));
+  Ember.Logger.error = function(...messages) {
+    handleError(generateError(messages.join(' ')));
   };
 }
 
