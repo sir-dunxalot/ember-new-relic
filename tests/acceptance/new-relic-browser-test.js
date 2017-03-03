@@ -43,3 +43,19 @@ test('Loading New Relic Browser', function(assert) {
 
   });
 });
+
+test('console.error from Ember.Logger.error correctly shows messages', function(assert) {
+  visit('/');
+
+  andThen(function() {
+
+    console.error = function(message) {
+      assert.ok(
+        message.toString().includes('Whoops We done messed up'),
+        'Shows messages space-separated'
+      );
+    };
+
+    Ember.Logger.error('Whoops', 'We done messed up');
+  });
+});
