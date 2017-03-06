@@ -49,9 +49,10 @@ test('console.error from Ember.Logger.error correctly shows messages', function(
 
   andThen(function() {
 
-    console.error = function(message) {
-      assert.ok(
-        message.toString().includes('Whoops We done messed up'),
+    console.error = function (message) {
+      assert.strictEqual(
+        message.toString(),
+        'Error: Whoops We done messed up',
         'Shows messages space-separated'
       );
     };
