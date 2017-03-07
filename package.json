@@ -1,6 +1,6 @@
 {
   "name": "ember-new-relic",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Adds New Relic to your Ember CLI app based on the app's environment",
   "directories": {
     "doc": "doc",
