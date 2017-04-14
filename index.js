@@ -33,7 +33,9 @@ module.exports = {
     var outputPath = this.outputPath = 'outputPath' in options ? options.outputPath : this.outputPath;
     var isValidNewRelicConfig = this.isValidNewRelicConfig = newRelicConfig.applicationID && newRelicConfig.licenseKey;
 
-    if (!isValidNewRelicConfig) {
+    // Don't show the warning if they didn't provide an applicationID
+    var showLackOfPropertiesWarning = newRelicConfig.applicationID && !isValidNewRelicConfig;
+    if (showLackOfPropertiesWarning) {
       this._writeWarnLine('New Relic config needs `applicationId` and `licenseKey` properties in order to output New Relic script.');
     }
 
