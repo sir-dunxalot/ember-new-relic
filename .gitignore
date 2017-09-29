@@ -1,11 +1,8 @@
-# See http://help.github.com/ignore-files/ for more about ignoring files.
+# See https://help.github.com/ignore-files/ for more about ignoring files.
 
 # compiled output
 /dist
 /tmp
-
-# test tmp output
-/node_tests/tmp
 
 # dependencies
 /node_modules
@@ -16,5 +13,14 @@
 /connect.lock
 /coverage/*
 /libpeerconnection.log
-npm-debug.log
+npm-debug.log*
+yarn-error.log
 testem.log
+
+# ember-try
+.node_modules.ember-try/
+bower.json.ember-try
+package.json.ember-try
+
+# test tmp output
+/node_tests/tmp
