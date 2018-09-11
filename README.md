@@ -12,7 +12,8 @@ This Ember addon adds [New Relic Browser](http://newrelic.com/browser-monitoring
 - [Content Security Policy](#content-security-policy)
 - [Development](#development)
 
-## Installation
+Installation
+------------------------------------------------------------------------------
 
 ```sh
 ember install ember-new-relic
