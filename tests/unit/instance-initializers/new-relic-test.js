@@ -1,22 +1,29 @@
-import Ember from 'ember';
-import NewRelicInitializer from '../../../instance-initializers/new-relic';
+import Application from '@ember/application';
+
+import { initialize } from 'dummy/instance-initializers/new-relic';
 import { module, test } from 'qunit';
+import { run } from '@ember/runloop';
 
-let application;
+module('Unit | Instance Initializer | new-relic', function(hooks) {
 
-module('Unit | Initializer | new relic', {
-  beforeEach() {
-    Ember.run(function() {
-      application = Ember.Application.create();
-      application.deferReadiness();
+  hooks.beforeEach(function() {
+    this.TestApplication = Application.extend();
+    this.TestApplication.instanceInitializer({
+      name: 'initializer under test',
+      initialize
     });
-  }
-});
+    this.application = this.TestApplication.create({ autoboot: false });
+    this.instance = this.application.buildInstance();
+  });
 
-// Replace this with your real tests.
-test('it works', function(assert) {
-  NewRelicInitializer.initialize(application);
+  hooks.afterEach(function() {
+    run(this.application, 'destroy');
+    run(this.instance, 'destroy');
+  });
 
-  // you would normally confirm the results of the initializer here
-  assert.ok(true);
+  test('it works', async function(assert) {
+    await this.instance.boot();
+
+    assert.ok(true);
+  });
 });
