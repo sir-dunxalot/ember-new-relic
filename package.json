@@ -17,6 +17,7 @@
     "doc": "doc",
     "test": "tests"
   },
+  "repository": "https://github.com/sir-dunxalot/ember-new-relic",
   "scripts": {
     "build": "ember build",
     "posttest": "cd ../",
