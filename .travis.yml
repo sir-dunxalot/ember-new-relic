@@ -22,13 +22,14 @@ env:
   matrix:
     # we recommend new addons test the current and previous LTS
     # as well as latest stable release (bonus points to beta/canary)
-    - EMBER_TRY_SCENARIO=ember-lts-2.12
-    - EMBER_TRY_SCENARIO=ember-lts-2.16
-    - EMBER_TRY_SCENARIO=ember-lts-2.18
-    - EMBER_TRY_SCENARIO=ember-release
-    - EMBER_TRY_SCENARIO=ember-beta
-    - EMBER_TRY_SCENARIO=ember-canary
-    - EMBER_TRY_SCENARIO=ember-default
+    - TEST_SUITE=frontend EMBER_TRY_SCENARIO=ember-lts-2.12
+    - TEST_SUITE=frontend EMBER_TRY_SCENARIO=ember-lts-2.16
+    - TEST_SUITE=frontend EMBER_TRY_SCENARIO=ember-lts-2.18
+    - TEST_SUITE=frontend EMBER_TRY_SCENARIO=ember-release
+    - TEST_SUITE=frontend EMBER_TRY_SCENARIO=ember-beta
+    - TEST_SUITE=frontend EMBER_TRY_SCENARIO=ember-canary
+    - TEST_SUITE=frontend EMBER_TRY_SCENARIO=ember-default
+    - TEST_SUITE=backend # node tests (node_tests dir)
 
 matrix:
   fast_finish: true
@@ -44,4 +45,5 @@ script:
   - npm run lint:js
   # Usually, it's ok to finish the test scenario without reverting
   #  to the addon's original dependency state, skipping "cleanup".
-  - node_modules/.bin/ember try:one $EMBER_TRY_SCENARIO --skip-cleanup
+  - if [ "$TEST_SUITE" = "backend" ]; then npm run test:node; fi
+  - if [ "$TEST_SUITE" = "frontend" ]; then node_modules/.bin/ember try:one $EMBER_TRY_SCENARIO --skip-cleanup; fi

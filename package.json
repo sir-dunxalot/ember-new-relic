@@ -23,7 +23,8 @@
     "lint:js": "eslint .",
     "start": "ember serve",
     "test": "ember test",
-    "test:all": "ember try:each"
+    "test:all": "ember try:each",
+    "test:node": "cd node_tests && node run.js"
   },
   "dependencies": {
     "broccoli-file-creator": "^1.1.1",
