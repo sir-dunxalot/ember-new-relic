@@ -1,4 +1,6 @@
 import Ember from 'ember';
+import { on } from 'rsvp';
+import { isNone } from '@ember/utils';
 
 export function initialize() {
   const { NREUM } = window;
@@ -8,16 +10,23 @@ export function initialize() {
   }
 
   function mustIgnoreError(error) {
-    // Ember 2.X seems to not catch `TransitionAborted` errors caused by regular redirects. We don't want these errors to show up in NewRelic so we have to filter them ourselfs.
-    // Once the issue https://github.com/emberjs/ember.js/issues/12505 is resolved we can remove this ignored error.
-    if (Ember.isNone(error)) {
+
+    /* Ember 2.X seems to not catch `TransitionAborted` errors caused by
+    regular redirects. We don't want these errors to show up in NewRelic
+    so we have to filter them ourselfs.
+
+    See https://github.com/emberjs/ember.js/issues/12505
+    */
+
+    if (isNone(error)) {
       return false;
     }
-    const errorName = Ember.get(error, 'name');
-    return errorName === 'TransitionAborted';
+
+    return error.name === 'TransitionAborted';
   }
 
   function handleError(error) {
+
     if (mustIgnoreError(error)) {
       return;
     }
@@ -28,7 +37,7 @@ export function initialize() {
       // Ignore
     }
 
-    console.error(error);
+    console.error(error); // eslint-disable-line  no-console
   }
 
   function generateError(cause, stack) {
@@ -41,11 +50,13 @@ export function initialize() {
 
   Ember.onerror = handleError;
 
-  Ember.RSVP.on('error', handleError);
+  on('error', handleError);
 
-  Ember.Logger.error = function(...messages) {
-    handleError(generateError(messages.join(' ')));
-  };
+  if (Ember.Logger) {
+    Ember.Logger.error = function(...messages) {
+      handleError(generateError(messages.join(' ')));
+    };
+  }
 }
 
 export default {

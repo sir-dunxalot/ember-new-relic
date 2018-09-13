@@ -1,16 +1,20 @@
+/* eslint no-console: 0 */
+
 import Ember from 'ember';
-import { test } from 'qunit';
-import moduleForAcceptance from '../../tests/helpers/module-for-acceptance';
+import { module, test } from 'qunit';
+import { visit } from '@ember/test-helpers';
+import { setupApplicationTest } from 'ember-qunit';
 
-moduleForAcceptance('Acceptance | new relic browser');
+module('Acceptance | new relic browser', function(hooks) {
+  setupApplicationTest(hooks);
 
-test('Loading New Relic Browser', function(assert) {
-  visit('/');
+  test('Loading New Relic Browser', async function(assert) {
 
-  andThen(function() {
-    var newRelic = window.NREUM;
+    await visit('/');
 
-    assert.expect(8);
+    const newRelic = window.NREUM;
+
+    assert.expect(Ember.Logger ? 8 : 6);
 
     assert.ok(newRelic,
       'The New Relic object (NREUM) should be added to the window');
@@ -36,20 +40,22 @@ test('Loading New Relic Browser', function(assert) {
     Ember.onerror(new Error('Awh crap'));
 
     const transitionError = new Error('Ember Transition Aborted Test');
+
     transitionError.name = "TransitionAborted";
+
     Ember.onerror(transitionError);
 
-    Ember.Logger.error('Whoops', 'We done messed up', {});
+    if (Ember.Logger) {
+      Ember.Logger.error('Whoops', 'We done messed up', {});
+    }
 
   });
-});
 
-test('console.error from Ember.Logger.error correctly shows messages', function(assert) {
-  visit('/');
+  test('console.error from Ember.Logger.error correctly shows messages', async function(assert) {
 
-  andThen(function() {
+    await visit('/');
 
-    console.error = function (message) {
+    console.error = function(message) {
       assert.strictEqual(
         message.toString(),
         'Error: Whoops We done messed up',
