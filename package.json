@@ -1,6 +1,6 @@
 {
   "name": "ember-new-relic",
-  "version": "0.5.3",
+  "version": "0.6.0",
   "description": "Adds New Relic to your Ember CLI app based on the app's environment",
   "keywords": [
     "ember-addon",
@@ -10,14 +10,13 @@
     "bug",
     "error"
   ],
-  "repository": "",
+  "repository": "https://github.com/sir-dunxalot/ember-new-relic",
   "license": "MIT",
   "author": "",
   "directories": {
     "doc": "doc",
     "test": "tests"
   },
-  "repository": "https://github.com/sir-dunxalot/ember-new-relic",
   "scripts": {
     "build": "ember build",
     "posttest": "cd ../",
