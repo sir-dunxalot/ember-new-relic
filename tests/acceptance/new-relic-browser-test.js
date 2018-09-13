@@ -14,7 +14,7 @@ module('Acceptance | new relic browser', function(hooks) {
 
     const newRelic = window.NREUM;
 
-    assert.expect(8);
+    assert.expect(Ember.Logger ? 8 : 6);
 
     assert.ok(newRelic,
       'The New Relic object (NREUM) should be added to the window');
@@ -45,7 +45,9 @@ module('Acceptance | new relic browser', function(hooks) {
 
     Ember.onerror(transitionError);
 
-    Ember.Logger.error('Whoops', 'We done messed up', {});
+    if (Ember.Logger) {
+      Ember.Logger.error('Whoops', 'We done messed up', {});
+    }
 
   });
 

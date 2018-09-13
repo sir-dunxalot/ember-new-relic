@@ -5,4 +5,6 @@ import { start } from 'ember-qunit';
 
 setApplication(Application.create(config.APP));
 
-start();
+/* https://github.com/emberjs/ember-qunit/pull/304 */
+
+start({ setupEmberOnerrorValidation: false });
