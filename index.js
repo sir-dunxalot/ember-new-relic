@@ -8,7 +8,7 @@ var defaultAgentClassic = 'js-agent.newrelic.com/nr-1016.min.js';
 var defaultAgentSPA = 'js-agent.newrelic.com/nr-spa-1071.min.js';
 
 module.exports = {
-  name: 'ember-new-relic',
+  name: require('./package').name,
 
   outputPath: 'new-relic.js',
 
