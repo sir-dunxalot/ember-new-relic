@@ -8,7 +8,6 @@
 
 ## Linting
 
-* `npm run lint:hbs`
 * `npm run lint:js`
 * `npm run lint:js -- --fix`
 
