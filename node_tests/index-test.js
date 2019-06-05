@@ -20,10 +20,10 @@ QUnit.module('ember-new-relic | When config[\'ember-new-relic\'].spaMonitoring i
     assert.equal(EmberNewRelic.wantsSPAMonitoring(this.newRelicConfig), false);
   });
 
-  QUnit.test('getNewRelicTrackingCode returns classicTrackingCode', function(assert) {
+  QUnit.test('getTemplateFile returns correct classic template', function(assert) {
     assert.equal(
-      EmberNewRelic.getNewRelicTrackingCode(this.newRelicConfig),
-      EmberNewRelic.classicTrackingCode(this.newRelicConfig)
+      EmberNewRelic.getTemplateFile(this.newRelicConfig),
+      'new-relic.js'
     );
   });
 });
@@ -71,10 +71,10 @@ QUnit.module('ember-new-relic | When config[\'ember-new-relic\'].spaMonitoring i
     assert.equal(EmberNewRelic.wantsSPAMonitoring(this.newRelicConfig), true);
   });
 
-  QUnit.test('getNewRelicTrackingCode returns spaTrackingCode', function(assert) {
+  QUnit.test('getTemplateFile returns correct spa template', function(assert) {
     assert.equal(
-      EmberNewRelic.getNewRelicTrackingCode(this.newRelicConfig),
-      EmberNewRelic.spaTrackingCode(this.newRelicConfig)
+      EmberNewRelic.getTemplateFile(this.newRelicConfig),
+      'new-relic-spa.js'
     );
   });
 
@@ -108,8 +108,18 @@ QUnit.module('ember-new-relic | When outputPath, applicationId, and licenseKey a
     let builder = new broccoli.Builder(tree);
     await builder.build();
 
-    let contents = fs.readFileSync(path.join(builder.outputPath, EmberNewRelic.outputPath), 'utf-8');
-    assert.equal(contents, EmberNewRelic.getNewRelicTrackingCode(newRelicConfig));
+    // simulate template replacement
+    let template = fs.readFileSync(path.join(__dirname, '..', 'new-relic-templates/new-relic-spa.js'), 'utf-8');
+    template = template.replace(/{{(.*?)}}/g, function(match, value) {
+      return EmberNewRelic.getTemplateValue(newRelicConfig, value);
+    });
+
+    // get actual result
+    let result = fs.readFileSync(path.join(builder.outputPath, EmberNewRelic.outputPath), 'utf-8');
+
+    // here we test that the result includes the template and not just that it is equal
+    // this is because the result file includes the fastboot guard wrapper
+    assert.ok(result.indexOf(template) !== -1);
 
     await builder.cleanup();
   });
