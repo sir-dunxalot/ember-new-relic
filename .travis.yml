@@ -43,9 +43,8 @@ jobs:
     # we recommend new addons test the current and previous LTS
     # as well as latest stable release (bonus points to beta/canary)
     - stage: "Additional Tests"
-      env: TEST_SUITE=frontend EMBER_TRY_SCENARIO=ember-lts-2.12
-    - env: TEST_SUITE=frontend EMBER_TRY_SCENARIO=ember-lts-2.16
-    - env: TEST_SUITE=frontend EMBER_TRY_SCENARIO=ember-lts-2.18
+      env: TEST_SUITE=frontend EMBER_TRY_SCENARIO=ember-lts-2.18
+    - env: TEST_SUITE=frontend EMBER_TRY_SCENARIO=ember-lts-3.4
     - env: TEST_SUITE=frontend EMBER_TRY_SCENARIO=ember-release
     - env: TEST_SUITE=frontend EMBER_TRY_SCENARIO=ember-beta
     - env: TEST_SUITE=frontend EMBER_TRY_SCENARIO=ember-canary
