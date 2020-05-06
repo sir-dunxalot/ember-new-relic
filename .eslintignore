@@ -1,6 +1,7 @@
 # unconventional js
 /blueprints/*/files/
 /vendor/
+/new-relic-templates/
 
 # compiled output
 /dist/
@@ -8,9 +9,11 @@
 
 # dependencies
 /bower_components/
+/node_modules/
 
 # misc
 /coverage/
+!.*
 
 # ember-try
 /.node_modules.ember-try/
