@@ -1,8 +1,7 @@
-/* globals QUnit */
-
 const broccoli = require('broccoli');
 const fs = require('fs');
 const path = require('path');
+const QUnit = require('qunit');
 const EmberNewRelic = require('../index.js');
 
 QUnit.module('ember-new-relic | When config[\'ember-new-relic\'].spaMonitoring is false', function(hooks) {
