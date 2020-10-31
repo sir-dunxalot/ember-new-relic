@@ -10,8 +10,8 @@ const fastbootTransform = require('fastboot-transform');
 const templatesFolder = 'new-relic-templates';
 
 const defaultBeacon = 'bam.nr-data.net';
-const defaultAgentClassic = 'js-agent.newrelic.com/nr-1123.min.js';
-const defaultAgentSPA = 'js-agent.newrelic.com/nr-spa-1123.min.js';
+const defaultAgentClassic = 'js-agent.newrelic.com/nr-1184.min.js';
+const defaultAgentSPA = 'js-agent.newrelic.com/nr-spa-1184.min.js';
 
 module.exports = {
   name: require('./package').name,
